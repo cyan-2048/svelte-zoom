@@ -18,12 +18,10 @@
   let matrix = new Matrix();
   let contain = null;
 
-  let scale = {
-    scaling: false,
-    lastHypo: 0,
-    value: 1,
-    max: 11,
-  };
+  export let maxScale = 11;
+  export let scaleValue = 1;
+
+  let scaling = false;
 
   export function fireManualZoom(dir) {
     const { innerHeight, innerWidth } = window;
@@ -39,9 +37,9 @@
       y: innerHeight / 2,
     };
 
-    const mat = matrix.scale(xFactor, yFactor, origin, in_x, in_y, ratio, scale.max, scale.value * xFactor, dir);
+    const mat = matrix.scale(xFactor, yFactor, origin, in_x, in_y, ratio, maxScale, scaleValue * xFactor, dir);
     img.style.transform = `translate(${mat.e}px,${mat.f}px) scale(${mat.d})`;
-    scale.value = mat.d;
+    scaleValue = mat.d;
   }
 
   export const zoomIn = () => fireManualZoom(1);
@@ -73,7 +71,7 @@
   }
 
   function fireMove(x, y) {
-    if (scale.scaling) return;
+    if (scaling) return;
     let in_x = (window.innerWidth - ratio.width * matrix.vtm.a) / 2;
     let in_y = (window.innerHeight - ratio.height * matrix.vtm.a) / 2;
 
@@ -88,8 +86,7 @@
     matrix.x -= xY.newX;
     matrix.y -= xY.newY;
 
-    scale.scaling = false;
-    scale.lastHypo = 0;
+    scaling = false;
     smooth = true;
   }
 
@@ -128,15 +125,7 @@
     position: absolute;
     transform-origin: 0 0;
     backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
     -moz-backface-visibility: hidden;
-    -o-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
-    -webkit-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
-    user-drag: none;
-    touch-action: none;
   }
 
   .c-svelteZoom--contain {
